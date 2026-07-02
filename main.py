@@ -4,7 +4,7 @@ from validador import validar_partida, separar_registros
 from transformador import transformar_partidas
 
 # Carregar
-partidas_raw = carregar_partidas("data/matches.csv")
+partidas_raw = carregar_partidas("data/matches_original.csv")
 # Validar
 jogos_validos, jogos_invalidos = separar_registros(partidas_raw, validar_partida)
 # Processar
