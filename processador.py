@@ -7,4 +7,4 @@ def media_gols(partidas):
     if not gols_validos:
         print("Sem gols válidos")
         return 
-    return sum(gols_validos) / len(gols_validos)
+    return round(sum(gols_validos) / len(gols_validos), 2)
