@@ -39,4 +39,4 @@ def carregar_config(caminho):
         return []
     
     with open(caminho, encoding="utf-8") as arquivo:
-        json.load(caminho)
+        return json.load(arquivo)

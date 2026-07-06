@@ -1,4 +1,4 @@
-from leitor import carregar_partidas
+from leitor import carregar_partidas, carregar_config
 from processador import media_gols
 from validador import validar_partida, separar_registros
 from transformador import transformar_partidas
@@ -6,6 +6,7 @@ import os, csv
 
 # Carregar
 partidas_raw = carregar_partidas("data/matches_original.csv")
+config = carregar_config("data/config.json")
 # Validar
 jogos_validos, jogos_invalidos = separar_registros(partidas_raw, validar_partida)
 total_jogos = jogos_validos + jogos_invalidos
