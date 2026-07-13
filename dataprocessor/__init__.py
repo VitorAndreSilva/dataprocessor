@@ -1,0 +1,1 @@
+"""Package principal do DataProcessor - Copa do Mundo"""
