@@ -1,14 +1,13 @@
 import unicodedata
 from datetime import date
-#from deep_translator import GoogleTranslator
+from deep_translator import GoogleTranslator
 
-#def _para_portugues(texto):
-    #tradutor = GoogleTranslator(source= "en", target= "pt")
-    #return tradutor.translate(texto)
-
-def _remover_acentos(texto):
-    nfkd = unicodedata.normalize("NFKD", texto)
-    return "".join(c for c in nfkd if not unicodedata.combining(c))
+def _para_portugues(texto):
+    tradutor = GoogleTranslator(source= "en", target= "pt")
+    try:
+        return tradutor.translate(texto)
+    except:
+        return texto
 
 def normalizar_nome(nome):
     if not nome:
@@ -23,7 +22,9 @@ def normalizar_data(data):
 
 def transformar_partida(partida):
     return {
-        "data": normalizar_data(partida.get("data")),
+        "data": _para_portugues(normalizar_data(partida.get("data"))),
+        #"equipe_casa": _para_portugues(partida.get("equipe_casa")),
+        #"equipe_visitante": _para_portugues(partida.get("equipe_visitante")),
         "equipe_casa": partida.get("equipe_casa"),
         "equipe_visitante": partida.get("equipe_visitante"),
         "gols_casa": partida.get("gols_casa"),
