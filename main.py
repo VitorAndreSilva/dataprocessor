@@ -1,8 +1,8 @@
 import os, csv
-from dataprocessor.pipeline import executar_pipeline
+from dataprocessor.services.processamento import executar_processamento
 
 def main():
-    resultado = executar_pipeline("data/matches_original.csv", "data/config.json")
+    resultado = executar_processamento("data/matches_original.csv", "data/config.json")
     jogos_validos = resultado["jogos_validos"]
     jogos_invalidos = resultado["jogos_invalidos"]
     total_jogos = resultado["total_jogos"]

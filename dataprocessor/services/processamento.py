@@ -1,9 +1,9 @@
-from .leitor import carregar_partidas, carregar_config
-from .processador import media_gols
-from .validador import validar_partida, separar_registros
-from .transformador import transformar_partidas
+from ..infra.arquivos import carregar_partidas, carregar_config
+from ..core.metricas import media_gols
+from ..core.validador import validar_partida, separar_registros
+from ..core.transformador import transformar_partidas
 
-def executar_pipeline(caminho_partidas, caminho_config):
+def executar_processamento(caminho_partidas, caminho_config):
     # Carregar
     partidas_raw = carregar_partidas(caminho_partidas)
     config = carregar_config(caminho_config)
@@ -12,6 +12,7 @@ def executar_pipeline(caminho_partidas, caminho_config):
     total_jogos = jogos_validos + jogos_invalidos
     # Processar
     media = media_gols(jogos_validos)
+    #soma = soma_gols(jogos_validos)
     # Transformar
     partidas = transformar_partidas(jogos_validos)
 
@@ -20,5 +21,6 @@ def executar_pipeline(caminho_partidas, caminho_config):
         "jogos_validos": jogos_validos,
         "jogos_invalidos": jogos_invalidos,
         "media_gols": media,
+        #"soma_gols": soma,
         "partidas": partidas
     }
