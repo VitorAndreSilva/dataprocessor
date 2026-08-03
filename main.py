@@ -1,8 +1,10 @@
 import os, csv
 from dataprocessor.services.processamento import executar_processamento
+from dataprocessor.config import carregamento_configuracao_padrao
 
 def main():
-    resultado = executar_processamento("data/matches_original.csv", "data/config.json")
+    app_config = carregamento_configuracao_padrao()
+    resultado = executar_processamento(app_config)
     jogos_validos = resultado["jogos_validos"]
     jogos_invalidos = resultado["jogos_invalidos"]
     total_jogos = resultado["total_jogos"]

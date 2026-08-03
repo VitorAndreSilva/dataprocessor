@@ -3,10 +3,10 @@ from ..core.metricas import media_gols
 from ..core.validador import validar_partida, separar_registros
 from ..core.transformador import transformar_partidas
 
-def executar_processamento(caminho_partidas, caminho_config):
+def executar_processamento(app_config):
     # Carregar
-    partidas_raw = carregar_partidas(caminho_partidas)
-    config = carregar_config(caminho_config)
+    partidas_raw = carregar_partidas(app_config.caminho_jogos)
+    config = carregar_config(app_config.caminho_config)
     # Validar
     jogos_validos, jogos_invalidos = separar_registros(partidas_raw, validar_partida)
     total_jogos = jogos_validos + jogos_invalidos
