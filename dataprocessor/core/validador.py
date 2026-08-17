@@ -23,15 +23,15 @@ def validar_gol(gol):
 
 def validar_partida(partida):
     erros = []
-    if not validar_equipe(partida.get("equipe_casa")):
+    if not validar_equipe(partida.equipe_casa):
         erros.append("Sem equipe 1")
-    if not validar_equipe(partida.get("equipe_visitante")):
+    if not validar_equipe(partida.equipe_fora):
         erros.append("Sem equipe 2")
-    if not validar_gol(partida.get("gols_casa")):
+    if not validar_gol(partida.gols_casa):
         erros.append("Sem gols")
-    if not validar_gol(partida.get("gols_fora")):
+    if not validar_gol(partida.gols_fora):
         erros.append("Sem gols")
-    if not data_valida(partida.get("data")):
+    if not data_valida(partida.data):
         erros.append("Data inválida")
     return erros
 

@@ -1,5 +1,6 @@
 import unicodedata
 from datetime import date
+from dataclasses import replace
 #from deep_translator import GoogleTranslator
 
 #def _para_portugues(texto):
@@ -21,15 +22,16 @@ def normalizar_data(data):
     return partes[0]
 
 def transformar_partida(partida):
-    return {
-        "data": normalizar_data(partida.get("data")),
-        #"equipe_casa": _para_portugues(partida.get("equipe_casa")),
-        #"equipe_visitante": _para_portugues(partida.get("equipe_visitante")),
-        "equipe_casa": partida.get("equipe_casa"),
-        "equipe_visitante": partida.get("equipe_visitante"),
-        "gols_casa": partida.get("gols_casa"),
-        "gols_fora": partida.get("gols_fora")
-    }
+    return replace(
+        partida,
+        data=normalizar_data(partida.data),
+        #equipe_casa=_para_portugues(partida.equipe_casa),
+        #equipe_fora=_para_portugues(partida.equipe_fora),
+        equipe_casa=partida.equipe_casa,
+        equipe_fora=partida.equipe_fora,
+        gols_casa=partida.gols_casa,
+        gols_fora=partida.gols_fora
+    )
 
 def transformar_partidas(partidas):
     return [transformar_partida(partida) for partida in partidas]
