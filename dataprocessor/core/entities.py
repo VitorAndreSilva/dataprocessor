@@ -12,3 +12,12 @@ class Partida:
     @property
     def identificacao(self) -> str:
         return f"{self.equipe_casa} x {self.equipe_fora}"
+
+@dataclass(frozen=True)
+class Equipe:
+    nome: str
+    sigla: str
+
+    @property
+    def identificacao(self):
+        return f"{self.nome} ({self.sigla})"

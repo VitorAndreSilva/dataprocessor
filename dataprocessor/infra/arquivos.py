@@ -1,5 +1,5 @@
 import os, csv, json
-from dataprocessor.core.entities import Partida
+from dataprocessor.core.entities import Partida, Equipe
 
 def _para_float(valor, padrao=None):
     try:
@@ -14,6 +14,10 @@ def _para_int(valor, padrao=None):
         return valor
     except:
         return None
+    
+@property
+def esta_aprovada(self) -> bool:
+    return self.status == "aprovado"
 
 def carregar_partidas(caminho):
     if not os.path.exists:
@@ -35,6 +39,24 @@ def carregar_partidas(caminho):
             partidas.append(partida)
 
         return partidas
+
+def carregar_equipes(caminho):
+    if not os.path.exists:
+        print(f"ERRO: Arquivo não encontrado: {caminho}")
+        return []
+
+    equipes = []
+    with open(caminho, encoding="utf-8") as arquivo:
+        leitor = csv.DictReader(arquivo)
+        for linha in leitor:
+            equipe = Equipe(
+                nome=linha["name"],
+                sigla=linha["tla"]
+            )
+        equipes.append(equipe)
+
+    return equipes
+    
 
 def carregar_config(caminho):
     if not os.path.exists(caminho):

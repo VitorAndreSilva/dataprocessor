@@ -10,6 +10,8 @@ def main():
     total_jogos = resultado["total_jogos"]
     media_gols = resultado["media_gols"]
     partidas = resultado["partidas"]
+    total_equipes = resultado["total_equipes"]
+    equipes = resultado["equipes"]
 
     # Saída
     print("===== DATAPROCESSOR - Copa do Mundo 2026 =====")
@@ -19,7 +21,12 @@ def main():
     print("Jogos:")
     for jogo in partidas:
         print(jogo)
+    print("Equipes:")
+    for equipe in equipes:
+        print(equipe)
+    print(f"Total de equipes: {total_equipes}")
 
+    '''
     os.makedirs("output", exist_ok=True)
     caminho_arquivo = os.path.join("output", "partidas_processadas.csv")
 
@@ -32,6 +39,7 @@ def main():
         print(f"\nArquivo salvo com sucesso em: {caminho_arquivo}")
     else:
         print("\nNenhuma partida válida para salvar.")
+    '''
 
 if __name__ == "__main__":
     main()

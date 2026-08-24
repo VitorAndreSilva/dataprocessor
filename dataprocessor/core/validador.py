@@ -11,7 +11,7 @@ def data_valida(texto):
         print(texto)
         return False
     
-def validar_equipe(texto):
+def validar_nome(texto):
     if not texto or not texto.strip():
         return False
     return True
@@ -23,9 +23,9 @@ def validar_gol(gol):
 
 def validar_partida(partida):
     erros = []
-    if not validar_equipe(partida.equipe_casa):
+    if not validar_nome(partida.equipe_casa):
         erros.append("Sem equipe 1")
-    if not validar_equipe(partida.equipe_fora):
+    if not validar_nome(partida.equipe_fora):
         erros.append("Sem equipe 2")
     if not validar_gol(partida.gols_casa):
         erros.append("Sem gols")
@@ -34,6 +34,13 @@ def validar_partida(partida):
     if not data_valida(partida.data):
         erros.append("Data inválida")
     return erros
+
+def validar_equipe(equipe):
+    erros = []
+    if not validar_nome(equipe.nome):
+        erros.append("Equipe sem nome")
+    if not validar_nome(equipe.sigla):
+        erros.append("Equipe sem sigla")
 
 def separar_registros(registros, funcao_validar, **kwargs):
     validos = []

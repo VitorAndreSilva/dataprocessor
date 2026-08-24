@@ -8,3 +8,6 @@ def media_gols(partidas):
         print("Sem gols válidos")
         return 
     return round(sum(gols_validos) / len(gols_validos), 2)
+
+def soma_equipes(equipes):
+    return len(equipes)

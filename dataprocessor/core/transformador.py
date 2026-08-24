@@ -35,3 +35,13 @@ def transformar_partida(partida):
 
 def transformar_partidas(partidas):
     return [transformar_partida(partida) for partida in partidas]
+
+def transformar_equipe(equipe):
+    return replace(
+        equipe,
+        nome=normalizar_nome(equipe.nome),
+        sigla=normalizar_nome(equipe.sigla)
+    )
+
+def transformar_equipes(equipes):
+    return [transformar_equipe(equipe) for equipe in equipes]
