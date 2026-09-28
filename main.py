@@ -1,8 +1,24 @@
 import os, csv
 from dataprocessor.services.processamento import executar_processamento
 from dataprocessor.config import carregamento_configuracao_padrao
+from dataprocessor.interfaces.menu import processar, exibir
 
 def main():
+    resultado = None
+    while True:
+        print("\n=== DataProcessor Copa do Mundo 2026 - Menu ===/")
+        print("1. Processar dados")
+        print("2. Exibir relatório")
+        print("3. Sair")
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            resultado = processar()
+        elif opcao == "2":
+            exibir(resultado)
+        elif opcao == "3":
+            break
+    '''
     app_config = carregamento_configuracao_padrao()
     resultado = executar_processamento(app_config)
     jogos_validos = resultado["jogos_validos"]
@@ -26,7 +42,6 @@ def main():
         print(equipe)
     print(f"Total de equipes: {total_equipes}")
 
-    '''
     os.makedirs("output", exist_ok=True)
     caminho_arquivo = os.path.join("output", "partidas_processadas.csv")
 

@@ -5,9 +5,9 @@ from ..core.transformador import transformar_partidas, transformar_equipes
 
 def executar_processamento(app_config):
     # Carregar
-    partidas_raw = carregar_partidas(app_config.caminho_jogos)
-    equipes_raw = carregar_equipes(app_config.caminho_equipes)
-    config = carregar_config(app_config.caminho_config)
+    partidas_raw = carregar_partidas(app_config.carregar_partidas)
+    equipes_raw = carregar_equipes(app_config.carregar_equipes)
+    config = carregar_config(app_config.carregar_config)
     # Validar
     jogos_validos, jogos_invalidos = separar_registros(partidas_raw, validar_partida)
     total_jogos = jogos_validos + jogos_invalidos
