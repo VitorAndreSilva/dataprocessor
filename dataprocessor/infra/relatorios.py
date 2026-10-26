@@ -1,13 +1,15 @@
 from abc import abstractmethod, ABC
 import json, io, csv
 
+from ..core.resultados import ResultadoProcessamento
+
 class GeradorRelatorio(ABC):
     @abstractmethod
-    def render(self, resultado) -> str:
+    def render(self, resultado: ResultadoProcessamento) -> str:
         ...
 
 class RelatorioTexto:
-    def render(self, resultado) -> str:
+    def render(self, resultado: ResultadoProcessamento) -> str:
         return "\n".join(
             [
                 "=== DataProcessor Copa do Mundo 2026 ===",
@@ -17,7 +19,7 @@ class RelatorioTexto:
         )
 
 class RelatorioJSON:
-    def render(self, resultado) -> str:
+    def render(self, resultado: ResultadoProcessamento) -> str:
         return json.dumps(resultado.to_dict(), ensure_ascii=False, indent=2) + '\n'
 
     def criador_gerador(formato: str) -> GeradorRelatorio:
@@ -28,7 +30,7 @@ class RelatorioJSON:
         return geradores[formato]
 
 class RelatorioCSV:
-    def render(self, resultado) -> str:
+    def render(self, resultado: ResultadoProcessamento) -> str:
         arquivo = io.StringIO()
         escritor = csv.writer(arquivo, lineterminator="\n")
         escritor.writerow(("data", "equipe_casa", "equipe_fora", "gols_casa", "gols_fora"))
