@@ -5,9 +5,9 @@ def media_gols(partidas):
             gols_validos.append(partida.gols_casa)
             gols_validos.append(partida.gols_fora)
     if not gols_validos:
-        print("Sem gols válidos")
-        return 
+        return 0
     return round(sum(gols_validos) / len(gols_validos), 2)
+
 
 def soma_equipes(equipes):
     return len(equipes)

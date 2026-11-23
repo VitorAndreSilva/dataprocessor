@@ -1,31 +1,27 @@
-from ..infra.arquivos import carregar_partidas, carregar_config, carregar_equipes
 from ..core.metricas import media_gols, soma_equipes
-from ..core.validador import validar_partida, separar_registros, validar_equipe
-from ..core.transformador import transformar_partidas, transformar_equipes
+from ..core.resultados import ResultadoProcessamento
+from ..core.transformador import transformar_equipes, transformar_partidas
+from ..core.validador import separar_registros, validar_equipe, validar_partida
+from ..infra.fontes import FonteDados
 
-def executar_processamento(app_config):
+
+def executar_processamento(fonte: FonteDados) -> ResultadoProcessamento:
     # Carregar
-    partidas_raw = carregar_partidas(app_config.carregar_partidas)
-    equipes_raw = carregar_equipes(app_config.carregar_equipes)
-    config = carregar_config(app_config.carregar_config)
+    partidas_raw = fonte.carregar_partidas()
+    equipes_raw = fonte.carregar_equipes()
+    config = fonte.carregar_config()
     # Validar
-    jogos_validos, jogos_invalidos = separar_registros(partidas_raw, validar_partida)
-    total_jogos = jogos_validos + jogos_invalidos
+    partidas_validas, partidas_invalidas = separar_registros(partidas_raw, validar_partida)
     equipes_validas, equipes_invalidas = separar_registros(equipes_raw, validar_equipe)
-    # Processar
-    media = media_gols(jogos_validos)
-    total_equipes = soma_equipes(equipes_validas)
     # Transformar
-    partidas = transformar_partidas(jogos_validos)
+    partidas = transformar_partidas(partidas_validas)
     equipes = transformar_equipes(equipes_validas)
-
-    return {
-        "total_jogos": total_jogos,
-        "jogos_validos": jogos_validos,
-        "jogos_invalidos": jogos_invalidos,
-        "media_gols": media,
-        #"soma_gols": soma,
-        "partidas": partidas,
-        "equipes": equipes,
-        "total_equipes": total_equipes
-    }
+    # Processar
+    return ResultadoProcessamento(
+        partidas=tuple(partidas),
+        equipes=tuple(equipes),
+        partidas_invalidas=tuple(partidas_invalidas),
+        equipes_invalidas=tuple(equipes_invalidas),
+        media_gols=media_gols(partidas),
+        total_equipes=soma_equipes(equipes),
+    )

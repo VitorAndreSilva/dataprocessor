@@ -1,71 +1,49 @@
-#import os, csv
-import os
+import argparse
+import logging
+from pathlib import Path
+
+from dataprocessor.infra.fontes import fonte_a_partir_de_caminhos
+from dataprocessor.infra.relatorios import criar_gerador
 from dataprocessor.services.processamento import executar_processamento
-from dataprocessor.config import carregamento_configuracao_padrao
-from dataprocessor.interfaces.menu import processar, exibir
 
-def main():
-    resultado = None
-    formato_relatorio = 'texto'
-    while True:
-        print("\n=== DataProcessor Copa do Mundo 2026 - Menu ===/")
-        print("1. Processar dados")
-        print("2. Exibir relatório")
-        print("3. Sair")
-        opcao = input("Escolha uma opção: ").strip()
-        os.system('clear')
 
-        if opcao == "1":
-            resultado = processar()
-        elif opcao == "2":
-            if resultado is None:
-                print("Nenhum dado processado. Escolha a opção 1 para continuar")
-                continue
-            formato_relatorio = exibir(resultado, formato_relatorio)
-        elif opcao == "3":
-            break
-        else:
-            print("Opção inválida. Escolha entre as 3 opções disponíveis.")
-            continue
+def configurar_parser():
+    parser = argparse.ArgumentParser(description="Processa partidas e times da Copa do Mundo 2026.")
+    parser.add_argument("--partidas", required=True, help="Caminho do CSV de partidas.")
+    parser.add_argument("--times", required=True, help="Caminho do CSV de times.")
+    parser.add_argument("--config", required=True, help="Caminho do JSON de configuração.")
+    parser.add_argument("--formato", choices=("texto", "json", "csv"), default="texto", help="Formato do relatório.")
+    parser.add_argument("--output", type=Path, default=Path("output"), help="Pasta de saída.")
+    return parser
 
-    return 1
-    '''
-    app_config = carregamento_configuracao_padrao()
-    resultado = executar_processamento(app_config)
-    jogos_validos = resultado["jogos_validos"]
-    jogos_invalidos = resultado["jogos_invalidos"]
-    total_jogos = resultado["total_jogos"]
-    media_gols = resultado["media_gols"]
-    partidas = resultado["partidas"]
-    total_equipes = resultado["total_equipes"]
-    equipes = resultado["equipes"]
 
-    # Saída
-    print("===== DATAPROCESSOR - Copa do Mundo 2026 =====")
-    print(f"jogos válidos: {len(jogos_validos)}/{len(total_jogos)}")
-    print(f"jogos inválidos: {len(jogos_invalidos)}/{len(total_jogos)}")
-    print(f"Média de gols: {media_gols}")
-    print("Jogos:")
-    for jogo in partidas:
-        print(jogo)
-    print("Equipes:")
-    for equipe in equipes:
-        print(equipe)
-    print(f"Total de equipes: {total_equipes}")
+def main(argv=None):
+    args = configurar_parser().parse_args(argv)
+    args.output.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(
+        filename=args.output / "dataprocessor.log",
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+    )
+    logging.info("Iniciando processamento")
+    try:
+        fonte = fonte_a_partir_de_caminhos(args.partidas, args.times, args.config)
+        resultado = executar_processamento(fonte)
+        relatorio = criar_gerador(args.formato).render(resultado)
+        nome_arquivo = "relatorio.txt" if args.formato == "texto" else f"relatorio.{args.formato}"
+        (args.output / nome_arquivo).write_text(relatorio, encoding="utf-8")
+        logging.info(
+            "Processamento concluído: %d partidas e %d equipes válidos",
+            len(resultado.partidas),
+            len(resultado.equipes),
+        )
+        print(relatorio, end="")
+        return 0
+    except (OSError, ValueError, KeyError) as erro:
+        logging.exception("Falha no processamento")
+        print(f"[ERRO] {erro}")
+        return 1
 
-    os.makedirs("output", exist_ok=True)
-    caminho_arquivo = os.path.join("output", "partidas_processadas.csv")
-
-    if partidas:
-        with open(caminho_arquivo, mode="w", encoding="utf-8") as arquivo_csv:
-            cabecalho = partidas[0]         
-            escritor = csv.DictWriter(arquivo_csv, fieldnames=cabecalho)
-            escritor.writerows(partidas)
-            
-        print(f"\nArquivo salvo com sucesso em: {caminho_arquivo}")
-    else:
-        print("\nNenhuma partida válida para salvar.")
-    '''
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

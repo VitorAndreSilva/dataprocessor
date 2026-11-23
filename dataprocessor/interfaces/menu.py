@@ -1,35 +1,64 @@
+from ..core.resultados import ResultadoProcessamento
 from ..infra.fontes import fonte_a_partir_de_caminhos
-from ..services.processamento import executar_processamento
 from ..infra.relatorios import criar_gerador
+from ..services.processamento import executar_processamento
 
-def processar_caminhos(caminho_partidas, caminho_times, caminho_config):
+OPCOES_VALIDAS = {"1", "2", "3"}
+FORMATOS_VALIDOS = {"texto", "json", "csv"}
+
+
+def processar_caminhos(caminho_partidas, caminho_times, caminho_config) -> ResultadoProcessamento:
     fonte = fonte_a_partir_de_caminhos(caminho_partidas, caminho_times, caminho_config)
     return executar_processamento(fonte)
 
-def processar():
+
+def processar() -> ResultadoProcessamento | None:
     caminho_partidas = input("Caminho do CSV de partidas [data/matches_original.csv]: ").strip() or "data/matches_original.csv"
     caminho_times = input("Caminho do CSV de times [data/times.csv]: ").strip() or "data/times.csv"
     caminho_config = input("Caminho do JSON de config [data/config.json]: ").strip() or "data/config.json"
-
     try:
         resultado = processar_caminhos(caminho_partidas, caminho_times, caminho_config)
     except (OSError, ValueError, KeyError) as erro:
         print(f"[ERRO] Não foi possível processar: {erro}")
         return None
-    print(f"Partidas válidas: {len(resultado["total_jogos"])}")
-    print(f"Equipes válidas: {len(resultado["equipes"])}")
+    print(f"Partidas válidas: {len(resultado.partidas)}")
+    print(f"Equipes válidas: {len(resultado.equipes)}")
     return resultado
 
-def exibir(resultado, formato_padrao):
-    formatos = {"texto", "json", "csv"}
-    formato = input(f"Formato (texto/json/csv) [{formato_padrao}]: ").strip() or formato_padrao
-    if formato not in formatos:
-        print(f"Formato inválido: {formato}")
+
+def exibir_relatorio(resultado: ResultadoProcessamento) -> None:
+    formato = input("Formato (texto/json/csv) [texto]: ").strip() or "texto"
+    if formato not in FORMATOS_VALIDOS:
+        print(f"Formato inválido: '{formato}'.")
         return
-    try:
-        gerador = criar_gerador(formato)
-    except (OSError, ValueError, KeyError) as erro:
-        print(f"[ERRO] A exibição falhou: {erro}")
-        return None
-    print(gerador.render(resultado))
-    return formato_padrao
+    print(criar_gerador(formato).render(resultado))
+
+
+def menu_principal() -> None:
+    resultado = None
+    while True:
+        print("\n=== DataProcessor Copa do Mundo 2026 - Menu ===")
+        print("1. Processar dados")
+        print("2. Exibir relatório")
+        print("3. Sair")
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao not in OPCOES_VALIDAS:
+            print(f"Opção inválida: '{opcao}'. Escolha 1, 2 ou 3.")
+            continue
+
+        if opcao == "1":
+            novo_resultado = processar()
+            if novo_resultado is not None:
+                resultado = novo_resultado
+        elif opcao == "2":
+            if resultado is None:
+                print("Nenhum dado processado ainda. Escolha a opção 1 primeiro.")
+                continue
+            exibir_relatorio(resultado)
+        else:
+            break
+
+
+if __name__ == "__main__":
+    menu_principal()

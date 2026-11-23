@@ -1,25 +1,30 @@
 from datetime import date
 
+from .resultados import RegistroInvalido
+
+
 def data_valida(texto):
-    if not texto or texto is None:
+    if not texto:
         return False
     try:
         partes = texto.strip().split("T")
         date.fromisoformat(partes[0])
         return True
-    except:
-        print(texto)
+    except ValueError:
         return False
-    
+
+
 def validar_nome(texto):
     if not texto or not texto.strip():
         return False
     return True
 
+
 def validar_gol(gol):
     if gol is None:
         return False
     return True
+
 
 def validar_partida(partida):
     erros = []
@@ -35,12 +40,15 @@ def validar_partida(partida):
         erros.append("Data inválida")
     return erros
 
+
 def validar_equipe(equipe):
     erros = []
     if not validar_nome(equipe.nome):
         erros.append("Equipe sem nome")
     if not validar_nome(equipe.sigla):
         erros.append("Equipe sem sigla")
+    return erros
+
 
 def separar_registros(registros, funcao_validar, **kwargs):
     validos = []
@@ -48,7 +56,7 @@ def separar_registros(registros, funcao_validar, **kwargs):
     for registro in registros:
         erros = funcao_validar(registro, **kwargs)
         if erros:
-            invalidos.append({"registro": registro, "erros": erros})
+            invalidos.append(RegistroInvalido(registro, tuple(erros)))
         else:
             validos.append(registro)
     return validos, invalidos

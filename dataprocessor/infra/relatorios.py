@@ -1,35 +1,42 @@
-from abc import abstractmethod, ABC
-import json, io, csv
+from abc import ABC, abstractmethod
+import csv
+import io
+import json
 
 from ..core.resultados import ResultadoProcessamento
+
 
 class GeradorRelatorio(ABC):
     @abstractmethod
     def render(self, resultado: ResultadoProcessamento) -> str:
         ...
 
-class RelatorioTexto:
+
+class RelatorioTexto(GeradorRelatorio):
     def render(self, resultado: ResultadoProcessamento) -> str:
         return "\n".join(
             [
                 "=== DataProcessor Copa do Mundo 2026 ===",
-                f"Jogos válidos: {len(resultado["partidas"])} "
-                f"Média de gols: {resultado["media_gols"]}"
+                "",
+                "[VALIDAÇÃO]",
+                f"Partidas válidas: {len(resultado.partidas)}",
+                f"Partidas inválidas: {len(resultado.partidas_invalidas)}",
+                f"Equipes válidas: {len(resultado.equipes)}",
+                f"Equipes inválidas: {len(resultado.equipes_invalidas)}",
+                "",
+                "[RELATÓRIO]",
+                f"Média de gols: {resultado.media_gols:.2f}",
+                f"Total de equipes: {resultado.total_equipes}",
             ]
         )
 
-class RelatorioJSON:
+
+class RelatorioJson(GeradorRelatorio):
     def render(self, resultado: ResultadoProcessamento) -> str:
-        return json.dumps(resultado.to_dict(), ensure_ascii=False, indent=2) + '\n'
+        return json.dumps(resultado.to_dict(), ensure_ascii=False, indent=2) + "\n"
 
-    def criador_gerador(formato: str) -> GeradorRelatorio:
-        geradores = {
-            "texto": RelatorioTexto,
-            "json": RelatorioJSON
-        }
-        return geradores[formato]
 
-class RelatorioCSV:
+class RelatorioCsv(GeradorRelatorio):
     def render(self, resultado: ResultadoProcessamento) -> str:
         arquivo = io.StringIO()
         escritor = csv.writer(arquivo, lineterminator="\n")
@@ -40,10 +47,11 @@ class RelatorioCSV:
             )
         return arquivo.getvalue()
 
+
 def criar_gerador(formato: str) -> GeradorRelatorio:
     geradores = {
         "texto": RelatorioTexto,
-        "json": RelatorioJSON,
-        "csv": RelatorioCSV
+        "json": RelatorioJson,
+        "csv": RelatorioCsv,
     }
     return geradores[formato]()
