@@ -1,14 +1,14 @@
-from ..infra.fontes import FonteDadosArquivos
+from ..infra.fontes import fonte_a_partir_de_caminhos
 from ..services.processamento import executar_processamento
 from ..infra.relatorios import criar_gerador
 
 def processar_caminhos(caminho_partidas, caminho_times, caminho_config):
-    fonte = FonteDadosArquivos(caminho_partidas, caminho_times, caminho_config)
+    fonte = fonte_a_partir_de_caminhos(caminho_partidas, caminho_times, caminho_config)
     return executar_processamento(fonte)
 
 def processar():
-    caminho_partidas = input("Caminho do CSV de clientes [data/matches_original.csv]: ").strip() or "data/matches_original.csv"
-    caminho_times = input("Caminho do CSV de transações [data/teams_world_cup_2026.csv]: ").strip() or "data/teams_world_cup_2026.csv"
+    caminho_partidas = input("Caminho do CSV de partidas [data/matches_original.csv]: ").strip() or "data/matches_original.csv"
+    caminho_times = input("Caminho do CSV de times [data/times.csv]: ").strip() or "data/times.csv"
     caminho_config = input("Caminho do JSON de config [data/config.json]: ").strip() or "data/config.json"
 
     try:

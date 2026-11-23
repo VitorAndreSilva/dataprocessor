@@ -26,3 +26,6 @@ class FonteDadosArquivos(FonteDados):
 
     def carregar_config(self):
         return carregar_config(self.caminho_config)
+
+def fonte_a_partir_de_caminhos(caminho_partidas, caminho_equipes, caminho_config) -> FonteDados:
+    return FonteDadosArquivos(caminho_partidas, caminho_equipes, caminho_config)
